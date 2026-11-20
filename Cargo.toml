@@ -1,0 +1,41 @@
+[workspace]
+resolver = "3"
+members = ["crates/core", "crates/sender", "crates/receiver", "crates/e2e"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.88"
+
+[workspace.dependencies]
+kbd-handoff-core = { path = "crates/core" }
+kbd-handoff-sender = { path = "crates/sender" }
+kbd-handoff-receiver = { path = "crates/receiver" }
+snow = { version = "0.10", default-features = false, features = ["default-resolver", "use-curve25519", "use-chacha20poly1305", "use-blake2", "use-getrandom"] }
+tokio = { version = "1", features = ["rt", "macros", "net", "io-util", "time", "sync", "signal"] }
+serde = { version = "1", features = ["derive"] }
+toml = "1"
+hex = "0.4"
+getrandom = "0.4"
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# The Linux sender is a resident process, so release builds favour a small
+# binary and a small memory footprint over speed: both programs only handle
+# a few short messages per key press. Measured on the sender, these settings
+# cut the file from 1.9 MB to 0.9 MB and its resident memory by roughly
+# 0.2 MB.
+#
+# `panic` deliberately stays at the default (unwind). The receiver releases
+# the keys it holds down from a `Drop` implementation, which must also run
+# on a panic, and in the sender a panic in a per-connection task should end
+# that connection rather than the whole process. Aborting would save about
+# 65 kB of file size and no measurable memory.
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+strip = true

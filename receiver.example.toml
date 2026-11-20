@@ -1,0 +1,13 @@
+# Example configuration for kbd-handoff-receiver (Windows side).
+#
+# Copy this file to %APPDATA%\kbd-handoff\receiver.toml (or pass
+# --config PATH) and replace the values below. Never commit the real file:
+# it contains the pre-shared key.
+
+# Address and port of the Linux sender.
+server = "192.0.2.10:47820"
+
+# Pre-shared key: 64 hex digits, identical to the sender's key.
+# Generate it on Linux with `kbd-handoff-sender gen-psk`.
+# The placeholder below is intentionally invalid and will be rejected.
+psk = "REPLACE-WITH-OUTPUT-OF-kbd-handoff-sender-gen-psk"

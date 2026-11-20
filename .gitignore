@@ -1,0 +1,4 @@
+/target
+# Real configuration files contain the pre-shared key and local addresses.
+sender.toml
+receiver.toml

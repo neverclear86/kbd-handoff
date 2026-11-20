@@ -1,0 +1,42 @@
+# systemd user unit for the Linux side of kbd-handoff.
+#
+# Install:
+#   install -Dm755 target/release/kbd-handoff-sender ~/.local/bin/kbd-handoff-sender
+#   install -Dm644 contrib/systemd/kbd-handoff-sender.service \
+#       ~/.config/systemd/user/kbd-handoff-sender.service
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now kbd-handoff-sender.service
+#
+# The configuration is read from the default path
+# (~/.config/kbd-handoff/sender.toml). To use another file, override
+# ExecStart with `systemctl --user edit kbd-handoff-sender.service`.
+#
+# Access to the input device is not granted here: it comes from the user's
+# own permissions (a uaccess ACL or group membership), so the sandbox below
+# leaves /dev untouched.
+
+[Unit]
+Description=kbd-handoff sender (forwards the keyboard to Windows on request)
+
+[Service]
+Type=exec
+ExecStart=%h/.local/bin/kbd-handoff-sender run
+Restart=on-failure
+RestartSec=2s
+
+# Hardening. None of these restrict /dev or TCP/IP networking.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=default.target

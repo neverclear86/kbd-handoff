@@ -1,0 +1,17 @@
+# Example configuration for kbd-handoff-sender (Linux side).
+# Copy to ~/.config/kbd-handoff/sender.toml and edit.
+
+# Address and port to listen on for the Windows receiver.
+listen = "0.0.0.0:47820"
+
+# Pre-shared key: 64 hex digits. Generate one with `kbd-handoff-sender gen-psk`
+# and put the same value in the receiver's configuration.
+psk = "REPLACE_WITH_OUTPUT_OF_kbd-handoff-sender_gen-psk"
+
+# Name of the input device to grab (see `kbd-handoff-sender list-devices`).
+# With keyd, use its virtual keyboard.
+device_name = "keyd virtual keyboard"
+
+# Holding all of these keys at once returns the keyboard to Linux without
+# involving Windows. Names are evdev KEY_* names. This is the default.
+emergency_release = ["KEY_LEFTCTRL", "KEY_LEFTALT", "KEY_LEFTSHIFT", "KEY_BACKSPACE"]

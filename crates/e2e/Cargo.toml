@@ -1,0 +1,16 @@
+[package]
+name = "kbd-handoff-e2e"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+
+[dev-dependencies]
+kbd-handoff-core.workspace = true
+kbd-handoff-sender.workspace = true
+kbd-handoff-receiver.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+anyhow.workspace = true
