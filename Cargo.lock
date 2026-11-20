@@ -278,7 +278,7 @@ dependencies = [
 
 [[package]]
 name = "kbd-handoff-core"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "getrandom 0.4.3",
  "hex",
@@ -291,7 +291,7 @@ dependencies = [
 
 [[package]]
 name = "kbd-handoff-e2e"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "kbd-handoff-core",
@@ -302,7 +302,7 @@ dependencies = [
 
 [[package]]
 name = "kbd-handoff-receiver"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "kbd-handoff-core",
@@ -315,7 +315,7 @@ dependencies = [
 
 [[package]]
 name = "kbd-handoff-sender"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "evdev",
