@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl, x86_64-pc-windows-gnu
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64
+      - name: Build
+        run: |
+          cargo build --release -p kbd-handoff-sender
+          cargo build --release -p kbd-handoff-sender --target x86_64-unknown-linux-musl
+          cargo build --release -p kbd-handoff-receiver --target x86_64-pc-windows-gnu
+      - name: Package
+        run: |
+          set -eu
+          mkdir dist
+          for variant in gnu musl; do
+            dir="kbd-handoff-sender-${GITHUB_REF_NAME}-x86_64-linux-${variant}"
+            mkdir "$dir"
+            if [ "$variant" = gnu ]; then
+              cp target/release/kbd-handoff-sender "$dir/"
+            else
+              cp target/x86_64-unknown-linux-musl/release/kbd-handoff-sender "$dir/"
+            fi
+            cp sender.example.toml contrib/systemd/kbd-handoff-sender.service README.md LICENSE "$dir/"
+            tar -czf "dist/$dir.tar.gz" "$dir"
+          done
+          dir="kbd-handoff-receiver-${GITHUB_REF_NAME}-x86_64-windows"
+          mkdir "$dir"
+          cp target/x86_64-pc-windows-gnu/release/kbd-handoff-receiver.exe receiver.example.toml README.md LICENSE "$dir/"
+          zip -r "dist/$dir.zip" "$dir"
+          (cd dist && sha256sum * > SHA256SUMS)
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
